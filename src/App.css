@@ -142,17 +142,20 @@ input, select, textarea {
   display: flex;
   background: #fff;
   border-radius: 12px;
-  border: 1.5px solid rgba(0,0,0,0.06);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  /* 以下の2行で、不自然な外枠線を完全に消して影だけで表現します */
+  border: none; 
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
   overflow: hidden;
   position: relative;
 }
 
 .event-category-sidebar {
   width: 32px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  /* border-leftなどの余計なプロパティを削除 */
 }
 
 .vertical-cat-text {
@@ -191,27 +194,35 @@ input, select, textarea {
   text-overflow: ellipsis;
 }
 
+/* 時刻バッジのスタイル（幅が広がるため調整） */
 .event-time-badge {
   font-size: 10px;
   font-weight: 700;
   color: var(--theme-blue);
   background: #eff6ff;
-  padding: 1px 6px;
+  padding: 2px 6px;
   border-radius: 4px;
   align-self: flex-start;
   margin-top: 4px;
+  white-space: nowrap; /* 改行させない */
 }
 
 /* 1時間未満の短い予定用 */
+/* 短い予定（1時間以内など）への対処法 */
 .is-short .event-info {
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 0 12px;
+  padding: 4px 10px;
 }
-.is-short .event-time-badge { margin-top: 0; }
-.is-short .event-sub-title { display: none; }
+
+.is-short .event-main-title {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.is-short .event-time-badge {
+  font-size: 9px;
+  padding: 0px 4px;
+  margin-top: 2px;
+}
 
 /* --- 5. モーダル (Add/Edit Modal) --- */
 .modal-overlay {
