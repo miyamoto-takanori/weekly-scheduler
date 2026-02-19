@@ -1,173 +1,44 @@
-.app-container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
-  color: #333;
-  background-color: #f5f5f5;
-}
+.app-container { height: 100vh; display: flex; flex-direction: column; background: #fff; overflow: hidden; }
 
-.header {
-  padding: 12px;
-  background: #ffffff;
-  border-bottom: 1px solid #ddd;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+.mobile-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px; background: #fff; border-bottom: 1px solid #ddd;
 }
+.header-center { text-align: center; }
+.date-display { font-weight: bold; font-size: 1.1rem; }
+.total-display { font-size: 0.8rem; color: #007aff; }
 
-.header h1 {
-  font-size: 1.1rem;
-  margin: 0;
-  color: #444;
-}
+.single-day-board { display: flex; flex: 1; overflow-y: auto; position: relative; }
+.time-column-mini { width: 30px; border-right: 1px solid #eee; background: #f9f9f9; }
+.time-label-mini { height: 60px; font-size: 10px; color: #999; text-align: center; }
 
-.schedule-board {
-  display: flex;
-  flex: 1;
-  overflow-x: auto;
-  overflow-y: auto;
-  background: #ffffff;
-}
-
-.time-column {
-  width: 45px;
-  flex-shrink: 0;
-  background: #fafafa;
-  border-right: 1px solid #ddd;
-  z-index: 10;
-}
-
-.day-column {
-  flex: 1;
-  min-width: 110px;
-  border-right: 1px solid #eee;
-  display: flex;
-  flex-direction: column;
-}
-
-.header-cell {
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border-bottom: 2px solid #ddd;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  text-align: center;
-}
-
-.date-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.date-text {
-  font-size: 11px;
-  font-weight: bold;
-}
-
-.total-time {
-  font-size: 10px;
-  color: #007aff;
-  font-weight: normal;
-  margin-top: 2px;
-}
-
-.time-label {
-  height: 60px; /* 1時間=60px */
-  font-size: 10px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding-right: 5px;
-  color: #888;
-  padding-top: 2px;
-}
-
-.grid-body {
-  position: relative;
-  flex: 1;
+.grid-body-main { 
+  flex: 1; position: relative; min-height: 1140px; 
   background-image: linear-gradient(#eee 1px, transparent 1px);
   background-size: 100% 60px;
-  min-height: 1140px;
 }
 
-/* 予定ブロック全体（写真の再現） */
-.event-item {
-  position: absolute;
-  left: 2px;
-  right: 2px;
-  border-radius: 4px;
-  display: flex;
-  overflow: hidden;
-  box-sizing: border-box;
-  background-color: #fff;
-  border: 1px solid rgba(0,0,0,0.12);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+.event-item-mobile {
+  position: absolute; left: 5px; right: 10px; display: flex;
+  background: #fff; border: 1px solid #eee; border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden;
 }
 
-/* 左側の垂直ラベル（写真の「バイト」「授業」部分） */
-.event-category-bar {
-  width: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-right: 1px solid rgba(0,0,0,0.08);
+.event-cat-vertical {
+  width: 25px; writing-mode: vertical-rl; text-orientation: upright;
+  font-size: 10px; font-weight: bold; display: flex; align-items: center; justify-content: center;
 }
 
-.category-text {
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font-size: 10px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  color: rgba(0,0,0,0.7);
-}
+.event-content { flex: 1; padding: 5px; display: flex; flex-direction: column; justify-content: center; }
+.event-main-text { font-size: 12px; font-weight: bold; }
+.event-sub-text { font-size: 10px; color: #666; }
 
-/* 右側の詳細テキスト */
-.event-details {
-  flex: 1;
-  padding: 4px 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-width: 0; /* テキスト溢れ防止 */
-}
+/* モーダル */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: flex-end; z-index: 1000; }
+.modal-content { background: #fff; width: 100%; padding: 20px; border-radius: 20px 20px 0 0; }
+.modal-content input, .modal-content select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+.row { display: flex; align-items: center; gap: 10px; }
+.modal-btns { display: flex; gap: 10px; margin-top: 10px; }
+.save-btn { flex: 1; background: #007aff; color: #fff; border: none; padding: 12px; border-radius: 8px; }
 
-.event-main {
-  font-size: 11px;
-  font-weight: bold;
-  line-height: 1.2;
-  margin-bottom: 2px;
-  word-break: break-all;
-}
-
-.event-sub-info {
-  font-size: 9px;
-  color: #666;
-  line-height: 1.3;
-}
-
-.event-time-range {
-  font-size: 8px;
-  color: #888;
-  margin-top: 1px;
-}
-
-.fab {
-  position: fixed;
-  bottom: 30px;
-  right: 25px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #007aff;
-  color: white;
-  border: none;
-  font-size: 30px;
-  box-shadow: 0 4px 15px rgba(0,122,255,0.4);
-  cursor: pointer;
-  z-index: 100;
-}
+.fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 30px; background: #007aff; color: #fff; font-size: 30px; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
