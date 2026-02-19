@@ -6,7 +6,7 @@ export const CATEGORY_SETTINGS = {
   'イベント': { color: '#4fff4c', hasTotal: false },
   '筋トレ': { color: '#6d80f7', hasTotal: true },
   '予定': { color: '#fdb4b4', hasTotal: false },
-  '勉強': { color: '#b2b2b2'}
+  '勉強': { color: '#b2b2b2', hasTotal: true }
 };
 
 export const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
