@@ -149,6 +149,8 @@ input, select, textarea {
   display: flex;
   overflow-y: auto;
   padding-bottom: 120px;
+  /* 全体の開始位置を20px下げる */
+  padding-top: 20px; 
 }
 
 .time-column {
@@ -156,7 +158,6 @@ input, select, textarea {
   flex-shrink: 0;
   background: rgba(255,255,255,0.5);
   border-right: 0.5px solid #eee;
-  padding-top: 20px; /* ② 上部に余裕を持たせる */
 }
 
 .time-cell {
@@ -164,21 +165,26 @@ input, select, textarea {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 .time-number {
   font-size: 11px;
   font-weight: 700;
   color: #9ca3af;
-  display: block;
-  text-align: center;
+  position: absolute;
+  /* セルの上端（＝線の位置）に配置し、自身の半分だけ上にずらす */
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  z-index: 10;
 }
 
 .grid-body {
   flex: 1;
   position: relative;
   background-image: linear-gradient(#eee 0.5px, transparent 0.5px);
-  margin-top: 20px; /* ② 時間軸ラベルのパディングと合わせる */
 }
 
 /* ① 日付選択のスタイル */
