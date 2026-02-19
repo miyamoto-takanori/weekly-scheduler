@@ -8,12 +8,14 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build", "deploy": "gh-pages -d dist",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "homepage": "https://miyamoto-takanori.github.io/weekly-scheduler/"
   },
   "dependencies": {
     "dexie": "^4.3.0",
     "dexie-react-hooks": "^4.2.0",
+    "framer-motion": "^12.34.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
