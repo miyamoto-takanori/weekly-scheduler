@@ -30,55 +30,111 @@ input, select, textarea {
   position: fixed;
 }
 
-/* --- 2. ヘッダー --- */
+/* --- 2. ヘッダー (中央配置 & 集計UI) --- */
 .page-header {
   flex-shrink: 0;
   background-color: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  padding: 1rem 1rem 0.5rem;
+  padding: 1rem 0.5rem 0.8rem;
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .header-badge {
   font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   color: var(--theme-blue);
   font-weight: 800;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .header-top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
+  max-width: 500px; /* 広がりすぎ防止 */
+  padding: 0 10px;
+}
+
+.header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .header-title {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   font-weight: 800;
   margin: 0;
   background: linear-gradient(to right, #111827, #4b5563);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
-.day-label { font-size: 1rem; opacity: 0.8; }
-.header-total { font-size: 0.75rem; color: var(--theme-blue); font-weight: 700; }
+.day-label { 
+  font-size: 0.9rem; 
+  opacity: 0.6; 
+  font-weight: 600;
+  -webkit-text-fill-color: #4b5563; /* グラデーション除外 */
+}
+
+/* カテゴリ別TotalピルUI */
+.header-totals-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.header-total-pill {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border: 0.5px solid rgba(0,0,0,0.03);
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.pill-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #4b5563;
+}
 
 .nav-btn {
   background: #f3f4f6;
   border: none;
-  width: 36px; height: 36px;
-  border-radius: 12px;
+  width: 38px; height: 38px;
+  border-radius: 14px;
   color: #9ca3af;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8rem;
 }
+
+.nav-btn:active { background: #e5e7eb; }
 
 /* --- 3. スケジュールボード --- */
 .swipe-container {
