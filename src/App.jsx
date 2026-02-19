@@ -18,6 +18,9 @@ function App() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
 
+  // 1時間あたりの高さ(px)をここで一括管理（短い予定を見やすくするために80pxに設定）
+  const ROW_HEIGHT = 80;
+
   // データ取得
   const dateString = selectedDate.toISOString().split('T')[0];
   const events = useLiveQuery(() => 
@@ -46,7 +49,8 @@ function App() {
   }, [events]);
 
   return (
-    <div className="app-layout">
+    // --row-height という名前で CSS変数を流し込む
+    <div className="app-layout" style={{ '--row-height': `${ROW_HEIGHT}px` }}>
       {/* ヘッダーエリア */}
       <header className="page-header">
         <div className="header-badge">Weekly Schedule</div>
@@ -95,12 +99,19 @@ function App() {
               ))}
             </div>
 
-            {/* 予定描画エリア */}
-            <div className="grid-body">
+            {/* 予定描画エリア：背景のグリッドサイズも ROW_HEIGHT に合わせる */}
+            <div 
+              className="grid-body" 
+              style={{ 
+                backgroundSize: `100% ${ROW_HEIGHT}px`,
+                minHeight: `${ROW_HEIGHT * 19}px` 
+              }}
+            >
               {events.map(event => (
                 <ScheduleItem 
                   key={event.id} 
                   event={event} 
+                  rowHeight={ROW_HEIGHT} // コンポーネントに高さを渡す
                   onLongPress={(ev) => setEditingEvent(ev)} 
                 />
               ))}
@@ -117,10 +128,14 @@ function App() {
         isOpen={isAddModalOpen} 
         onClose={() => setIsAddModalOpen(false)} 
         dateString={dateString}
-        existingEvents={events} // 重複チェック用に渡す
+        existingEvents={events}
       />
 
+      {/* ここがポイント： key を付けることで、別の予定を選択するたびに
+        EditModal が新しく作り直され、useEffectなしでもStateが正しく初期化されます。
+      */}
       <EditModal 
+        key={editingEvent?.id || 'empty'}
         event={editingEvent} 
         onClose={() => setEditingEvent(null)} 
       />
