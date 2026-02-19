@@ -68,7 +68,7 @@ function App() {
   return (
     <div className="app-layout" style={{ '--row-height': `${ROW_HEIGHT}px` }}>
       <header className="page-header">
-        <div className="header-badge">Weekly Schedule</div>
+        <div className="header-badge">Daily Planner</div>
         <div className="header-top-row">
           <button className="nav-btn" onClick={() => changeDate(-1)}>◀</button>
           <div className="header-center">
