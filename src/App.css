@@ -7,6 +7,7 @@
 
 * {
   box-sizing: border-box;
+  /* iPhoneの長押しメニューを完全に殺す（自前長押しの邪魔をさせない） */
   -webkit-touch-callout: none !important;
   -webkit-user-select: none;
   user-select: none;
@@ -14,6 +15,7 @@
 }
 
 input, select, textarea {
+  /* 入力欄だけは操作できるように戻す */
   -webkit-user-select: auto;
   user-select: auto;
 }
@@ -87,7 +89,7 @@ input, select, textarea {
   inset: 0;
   display: flex;
   overflow-y: auto;
-  padding-bottom: 100px;
+  padding-bottom: 120px;
 }
 
 .time-column {
@@ -126,11 +128,13 @@ input, select, textarea {
   left: 10px; right: 15px;
   padding: 1px 0;
   transition: transform 0.1s;
+  touch-action: none; /* ブラウザのスクロールより長押し判定を優先しやすくする */
 }
 
+/* 長押し中のフィードバック（少し凹む） */
 .event-card-mobile:active {
-  transform: scale(0.97);
-  opacity: 0.9;
+  transform: scale(0.96);
+  opacity: 0.8;
 }
 
 .event-card-inner {
@@ -138,35 +142,35 @@ input, select, textarea {
   display: flex;
   background: #fff;
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.08); /* ①角丸の汚れ防止に境界を明確化 */
+  border: 1.5px solid rgba(0,0,0,0.06);
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   overflow: hidden;
   position: relative;
 }
 
 .event-category-sidebar {
-  width: 30px;
+  width: 32px;
   display: flex;
   align-items: center;
-  justify-content: center; /* ②上下左右中央 */
+  justify-content: center;
 }
 
 .vertical-cat-text {
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-size: 11px;
-  font-weight: 800;
-  color: rgba(0,0,0,0.5);
+  font-weight: 900;
+  color: rgba(0,0,0,0.4);
   text-align: center;
 }
 
 .event-info {
   flex: 1;
-  padding: 10px 12px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-width: 0; /* 文字溢れ防止 */
+  min-width: 0;
 }
 
 .event-main-title {
@@ -198,7 +202,7 @@ input, select, textarea {
   margin-top: 4px;
 }
 
-/* ② 1時間未満の短い予定用 */
+/* 1時間未満の短い予定用 */
 .is-short .event-info {
   flex-direction: row;
   align-items: center;
@@ -209,12 +213,12 @@ input, select, textarea {
 .is-short .event-time-badge { margin-top: 0; }
 .is-short .event-sub-title { display: none; }
 
-/* --- 5. モーダル共通 (Add/Edit Modal) --- */
+/* --- 5. モーダル (Add/Edit Modal) --- */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex; align-items: flex-end;
   z-index: 2000;
   padding: 16px;
@@ -224,8 +228,8 @@ input, select, textarea {
 .modal-content {
   background: white; width: 100%;
   border-radius: 28px; padding: 24px;
-  box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
-  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @keyframes slideUp {
@@ -238,57 +242,97 @@ input, select, textarea {
   text-align: center;
 }
 
-.modal-header h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.modal-header h3 { margin: 0; font-size: 1.2rem; font-weight: 900; color: #111827; }
 
-.edit-form { display: flex; flex-direction: column; gap: 16px; }
-.form-section { display: flex; flex-direction: column; gap: 4px; }
-.form-label { font-size: 0.75rem; font-weight: 800; color: var(--theme-blue); text-transform: uppercase; }
+.edit-form { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 16px; 
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-bottom: 10px;
+}
+
+.form-section { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 0.75rem; font-weight: 800; color: var(--theme-blue); text-transform: uppercase; letter-spacing: 0.05em; }
 
 .input-field {
-  width: 100%; padding: 0.8rem; font-size: 16px; /* iPhoneズーム防止 */
-  border-radius: 12px; border: 2px solid #f3f4f6;
-  background: #f9fafb; outline: none;
+  width: 100% !important; 
+  padding: 0.9rem; 
+  font-size: 16px; /* iPhoneでのズームを防止 */
+  border-radius: 14px; 
+  border: 2px solid #f3f4f6;
+  background: #f9fafb; 
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
 }
 
-/* ④ iPhone タイムスライダー対策 */
-.time-row-iphone {
-  display: flex;
-  gap: 12px;
+.input-field:focus {
+  border-color: var(--theme-blue);
+  background: #fff;
+}
+
+/* アクションボタン（スマホ最適化） */
+.modal-actions { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 10px; 
+  margin-top: 24px; 
+}
+
+.save-btn { 
   width: 100%;
-}
-.time-input-container {
-  flex: 1;
-  min-width: 0; /* これが重要 */
+  background: var(--theme-blue); 
+  color: #fff; 
+  border: none; 
+  padding: 16px; 
+  border-radius: 16px; 
+  font-weight: 900; 
+  font-size: 16px;
 }
 
-.modal-actions { display: flex; gap: 12px; margin-top: 24px; }
-.save-btn { flex: 2; background: var(--theme-blue); color: #fff; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
-.cancel-btn { flex: 1; background: #f3f4f6; color: #666; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
+.save-btn:active { opacity: 0.8; transform: scale(0.98); }
 
-/* ⑥ 編集/削除用追加スタイル */
 .delete-exec-btn {
-  flex: 2;
-  background: var(--danger-red);
-  color: #fff;
-  border: none;
+  background: #fff;
+  color: var(--danger-red);
+  border: 2px solid #fee2e2;
   padding: 14px;
   border-radius: 16px;
   font-weight: 800;
+  font-size: 15px;
+}
+
+.delete-exec-btn:active { background: #fef2f2; }
+
+.cancel-btn { 
+  background: #f3f4f6; 
+  color: #666; 
+  border: none; 
+  padding: 14px; 
+  border-radius: 16px; 
+  font-weight: 800; 
+  font-size: 15px;
 }
 
 .delete-confirm-view {
   text-align: center;
-  padding: 10px 0;
-  color: #4b5563;
+  padding: 15px 0;
+  background: #f9fafb;
+  border-radius: 16px;
+  margin-bottom: 10px;
 }
 
-/* --- 6. その他 UI --- */
+.delete-confirm-view p { margin: 5px 0; color: #4b5563; line-height: 1.5; }
+
+/* --- 6. FAB --- */
 .fab-button {
-  position: fixed; bottom: 30px; right: 25px;
+  position: fixed; bottom: 35px; right: 25px;
   width: 64px; height: 64px; border-radius: 22px;
   background: var(--theme-blue); color: white;
   font-size: 32px; border: none;
-  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
   z-index: 100;
   display: flex; align-items: center; justify-content: center;
 }

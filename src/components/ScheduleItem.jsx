@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { CATEGORY_SETTINGS } from '../constants';
 
 export default function ScheduleItem({ event, onLongPress }) {
+  const timerRef = useRef(null);
+
+  const handleTouchStart = () => {
+    // 500ms以上押し続けたら長押しと判定
+    timerRef.current = setTimeout(() => {
+      onLongPress(event);
+    }, 500);
+  };
+
+  const handleTouchEnd = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
   const getMinutes = (timeStr) => {
     const [h, m] = timeStr.split(':').map(Number);
     return (h - 6) * 60 + m;
@@ -10,15 +23,17 @@ export default function ScheduleItem({ event, onLongPress }) {
   const top = getMinutes(event.startTime);
   const duration = getMinutes(event.endTime) - top;
   const color = CATEGORY_SETTINGS[event.category]?.color;
-  
-  // ② 短い（60分未満）時の判定
   const isShort = duration < 60;
 
   return (
     <div 
       className={`event-card-mobile ${isShort ? 'is-short' : ''}`} 
       style={{ top: `${top}px`, height: `${duration}px` }}
-      onContextMenu={(e) => { e.preventDefault(); onLongPress(event); }} // PC/スマホ長押し
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onMouseDown={handleTouchStart} // PCでのデバッグ用
+      onMouseUp={handleTouchEnd}
+      onContextMenu={(e) => e.preventDefault()} // OS標準メニューを完全ブロック
     >
       <div className="event-card-inner" style={{ borderLeftColor: color }}>
         <div className="event-category-sidebar" style={{ backgroundColor: color }}>
