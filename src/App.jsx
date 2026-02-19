@@ -37,16 +37,25 @@ function App() {
     return (h - START_HOUR) * 60 + m;
   };
 
-  // カテゴリ別の集計ロジック (getMinutesを使用するように修正)
+  // カテゴリ別の集計ロジック
   const categoryTotals = useMemo(() => {
+    // 1. まず、hasTotal: true のカテゴリをすべて 0 で初期化する
     const totals = {};
-    events.forEach(e => {
-      if (CATEGORY_SETTINGS[e.category]?.hasTotal) {
-        // getMinutesを使うことでロジックを統一
-        const duration = getMinutes(e.endTime) - getMinutes(e.startTime);
-        totals[e.category] = (totals[e.category] || 0) + duration;
+    Object.entries(CATEGORY_SETTINGS).forEach(([catName, settings]) => {
+      if (settings.hasTotal) {
+        totals[catName] = 0;
       }
     });
+
+    // 2. 存在するイベントの時間分を加算する
+    events.forEach(e => {
+      // 既に初期化されている（＝hasTotalがtrueの）カテゴリのみ加算
+      if (totals[e.category] !== undefined) {
+        const duration = getMinutes(e.endTime) - getMinutes(e.startTime);
+        totals[e.category] += duration;
+      }
+    });
+    
     return totals;
   }, [events]);
 
