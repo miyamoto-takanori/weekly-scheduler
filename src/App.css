@@ -130,7 +130,8 @@ input, select, textarea {
   left: 10px; right: 15px;
   padding: 1px 0;
   transition: transform 0.1s;
-  touch-action: none;
+  /* ④ 縦方向のスクロールはブラウザに任せる */
+  touch-action: pan-y; 
 }
 
 .event-card-mobile:active {
@@ -218,17 +219,24 @@ input, select, textarea {
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  display: flex; align-items: flex-end;
+  display: flex; 
+  align-items: center; /* 中央に配置 */
+  justify-content: center;
   z-index: 2000;
-  padding: 16px;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+  padding: 20px;
 }
 
 .modal-content {
-  background: white; width: 100%;
-  border-radius: 28px; padding: 24px;
-  box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: white; 
+  width: 100%;
+  max-width: 400px; /* 幅を固定（スマホの最大幅を超えない） */
+  max-height: 90vh; /* 画面からはみ出さない */
+  border-radius: 28px; 
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  overflow: hidden; /* 中身だけをスクロールさせるため */
 }
 
 @keyframes slideUp {
@@ -247,9 +255,18 @@ input, select, textarea {
   display: flex; 
   flex-direction: column; 
   gap: 16px; 
-  max-height: 60vh;
-  overflow-y: auto;
-  padding-bottom: 10px;
+  overflow-y: auto; /* ③ モーダル内スクロールを有効化 */
+  padding-right: 4px; /* スクロールバー用の微調整 */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* スクロールバーを少し綺麗に */
+.edit-form::-webkit-scrollbar {
+  width: 4px;
+}
+.edit-form::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
 }
 
 .form-section { display: flex; flex-direction: column; gap: 6px; }

@@ -1,11 +1,11 @@
 import React, { useRef } from 'react';
-import { START_HOUR } from '../constants';
+import { CATEGORY_SETTINGS, START_HOUR } from '../constants';
 
 export default function ScheduleItem({ event, onLongPress, rowHeight }) {
   const timerRef = useRef(null);
 
-  // スマホ用長押しロジック
   const handleTouchStart = () => {
+    // 500ms後に長押し判定。それまでに指が動いたり離れたらキャンセル
     timerRef.current = setTimeout(() => {
       onLongPress(event);
     }, 500);
@@ -15,14 +15,21 @@ export default function ScheduleItem({ event, onLongPress, rowHeight }) {
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
+  // 指が動いたら長押しをキャンセル（これで縦スクロールを邪魔しなくなる）
+  const handleTouchMove = () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
   const getMinutes = (timeStr) => {
     const [h, m] = timeStr.split(':').map(Number);
     return (h - START_HOUR) * 60 + m;
   };
 
-  // rowHeight(1時間あたりのpx) を基準に計算
   const top = (getMinutes(event.startTime) / 60) * rowHeight;
   const duration = ((getMinutes(event.endTime) - getMinutes(event.startTime)) / 60) * rowHeight;
+  
+  // カテゴリ設定から色を取得
+  const catColor = CATEGORY_SETTINGS[event.category]?.color || '#ddd';
 
   return (
     <div 
@@ -30,16 +37,21 @@ export default function ScheduleItem({ event, onLongPress, rowHeight }) {
       style={{ top: `${top}px`, height: `${duration}px` }}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove} // 追加
       onMouseDown={handleTouchStart}
       onMouseUp={handleTouchEnd}
       onContextMenu={(e) => e.preventDefault()}
     >
       <div className="event-card-inner">
-        <div className="event-category-sidebar" style={{ backgroundColor: event.color }}>
+        {/* ① カテゴリ色の反映 */}
+        <div className="event-category-sidebar" style={{ backgroundColor: catColor }}>
           <span className="vertical-cat-text">{event.category}</span>
         </div>
         <div className="event-info">
-          <div className="event-main-title">{event.mainTitle}</div>
+          {/* ② タイトル色をカテゴリ色に合わせる */}
+          <div className="event-main-title" style={{ color: catColor }}>
+            {event.mainTitle}
+          </div>
           <div className="event-sub-title">{event.subTitle}</div>
           <div className="event-time-badge">
             {event.startTime} 〜 {event.endTime}

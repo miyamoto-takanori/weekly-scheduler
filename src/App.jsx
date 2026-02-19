@@ -84,9 +84,12 @@ function App() {
             transition={{ type: 'spring', stiffness: 300, damping: 32 }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            onDragEnd={(e, { offset }) => {
-              if (offset.x > 80) changeDate(-1);
-              else if (offset.x < -80) changeDate(1);
+            dragElastic={0.2}
+            // ↓ ここを追加：指を80px以上横に動かさない限りドラッグを開始しない
+            dragDirectionLock
+            onDragEnd={(e, { offset, velocity }) => {
+              if (offset.x > 100) changeDate(-1);
+              else if (offset.x < -100) changeDate(1);
             }}
             className="single-day-board"
           >
