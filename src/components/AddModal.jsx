@@ -9,12 +9,32 @@ export default function AddModal({ isOpen, onClose, dateString, existingEvents }
 
   if (!isOpen) return null;
 
+  const getMinutesTotal = (timeStr) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+  };
+
   const handleSave = async () => {
     if (!formData.mainTitle) return;
 
-    const newStart = formData.startTime;
-    const newEnd = formData.endTime;
-    const isOverlapping = existingEvents.some(e => (newStart < e.endTime && newEnd > e.startTime));
+    const startMins = getMinutesTotal(formData.startTime);
+    const endMins = getMinutesTotal(formData.endTime);
+
+    // バリデーション
+    if (startMins >= endMins) {
+      alert("終了時刻は開始時刻より後の時間に設定してください（日付を跨ぐ登録はできません）。");
+      return;
+    }
+    if (endMins - startMins < 30) {
+      alert("予定は最低30分以上で登録してください。");
+      return;
+    }
+
+    const isOverlapping = existingEvents.some(e => {
+      const eStart = getMinutesTotal(e.startTime);
+      const eEnd = getMinutesTotal(e.endTime);
+      return (startMins < eEnd && endMins > eStart);
+    });
 
     if (isOverlapping) {
       alert("その時間帯には既に予定が入っています。");

@@ -2,15 +2,44 @@ import React, { useState } from 'react';
 import { db } from '../db';
 import { CATEGORY_SETTINGS } from '../constants';
 
-export default function EditModal({ event, onClose }) {
-  // useEffectを使わず、useStateの初期値として直接渡す
-  // eventがnullのときはnull、あるときはそのコピーを初期値にする
+export default function EditModal({ event, onClose, existingEvents }) {
   const [formData, setFormData] = useState(() => event ? { ...event } : null);
 
-  // もしeventが渡されていない（モーダルが閉じてる）なら何も表示しない
   if (!event || !formData) return null;
 
+  const getMinutesTotal = (timeStr) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
+  };
+
   const handleUpdate = async () => {
+    if (!formData.mainTitle) return;
+
+    const startMins = getMinutesTotal(formData.startTime);
+    const endMins = getMinutesTotal(formData.endTime);
+
+    if (startMins >= endMins) {
+      alert("終了時刻は開始時刻より後の時間に設定してください（日付を跨ぐ登録はできません）。");
+      return;
+    }
+    if (endMins - startMins < 30) {
+      alert("予定は最低30分以上で登録してください。");
+      return;
+    }
+
+    // 重複チェック（自分自身は除く）
+    const isOverlapping = existingEvents.some(e => {
+      if (e.id === event.id) return false;
+      const eStart = getMinutesTotal(e.startTime);
+      const eEnd = getMinutesTotal(e.endTime);
+      return (startMins < eEnd && endMins > eStart);
+    });
+
+    if (isOverlapping) {
+      alert("その時間帯には既に予定が入っています。");
+      return;
+    }
+
     await db.events.update(event.id, formData);
     onClose();
   };
