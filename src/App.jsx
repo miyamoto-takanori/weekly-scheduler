@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import { db } from './db';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -14,8 +14,31 @@ function App() {
   const [direction, setDirection] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
-
+  const [now, setNow] = useState(new Date());
   const ROW_HEIGHT = 80;
+
+  // 1分ごとに現在時刻を更新する
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 60000); // 60秒ごと
+    return () => clearInterval(timer);
+  }, []);
+
+  // 赤線の位置を計算（開始時間からの経過分をピクセルに変換）
+  const currentTimePosition = useMemo(() => {
+    const hours = now.getHours();
+    const minutes = now.getMinutes();
+    const totalMinutes = (hours - START_HOUR) * 60 + minutes;
+    
+    // 表示範囲（START_HOUR 〜 19時間分）に入っているか確認
+    if (hours < START_HOUR || hours >= START_HOUR + 19) return null;
+    
+    return (totalMinutes / 60) * ROW_HEIGHT;
+  }, [now, ROW_HEIGHT]);
+
+  // 選択されている日が「今日」かどうか判定
+  const isToday = selectedDate.toDateString() === now.toDateString();
 
   const dateString = selectedDate.toISOString().split('T')[0];
   const events = useLiveQuery(() => 
@@ -140,6 +163,15 @@ function App() {
                 minHeight: `${ROW_HEIGHT * 19}px` 
               }}
             >
+
+              {/* 現在時刻の赤線（カードの下にするため先に描画） */}
+              {isToday && currentTimePosition !== null && (
+                <div 
+                  className="current-time-line" 
+                  style={{ top: `${currentTimePosition}px` }} 
+                />
+              )}
+              
               {events.map(event => (
                 <ScheduleItem 
                   key={event.id} 
