@@ -2,20 +2,23 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
   color: #333;
+  background-color: #f5f5f5;
 }
 
 .header {
-  padding: 10px;
-  background: #fff;
+  padding: 12px;
+  background: #ffffff;
   border-bottom: 1px solid #ddd;
   text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 .header h1 {
-  font-size: 18px;
+  font-size: 1.1rem;
   margin: 0;
+  color: #444;
 }
 
 .schedule-board {
@@ -23,37 +26,53 @@
   flex: 1;
   overflow-x: auto;
   overflow-y: auto;
-  background: #fff;
+  background: #ffffff;
 }
 
 .time-column {
   width: 45px;
   flex-shrink: 0;
-  background: #fdfdfd;
+  background: #fafafa;
   border-right: 1px solid #ddd;
   z-index: 10;
 }
 
 .day-column {
   flex: 1;
-  min-width: 100px;
+  min-width: 110px;
   border-right: 1px solid #eee;
   display: flex;
   flex-direction: column;
 }
 
 .header-cell {
-  height: 50px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: bold;
   background: #fff;
   border-bottom: 2px solid #ddd;
   position: sticky;
   top: 0;
   z-index: 5;
+  text-align: center;
+}
+
+.date-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-text {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.total-time {
+  font-size: 10px;
+  color: #007aff;
+  font-weight: normal;
+  margin-top: 2px;
 }
 
 .time-label {
@@ -62,54 +81,79 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
-  padding-right: 4px;
-  color: #999;
+  padding-right: 5px;
+  color: #888;
+  padding-top: 2px;
 }
 
 .grid-body {
   position: relative;
   flex: 1;
-  /* 1時間(60px)ごとの横線 */
   background-image: linear-gradient(#eee 1px, transparent 1px);
   background-size: 100% 60px;
-  min-height: 1140px; /* 6:00〜25:00の19時間分 */
+  min-height: 1140px;
 }
 
+/* 予定ブロック全体（写真の再現） */
 .event-item {
   position: absolute;
   left: 2px;
   right: 2px;
-  border: 1px solid rgba(0,0,0,0.05);
   border-radius: 4px;
-  padding: 4px 2px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
   box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid rgba(0,0,0,0.12);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.event-category {
-  font-size: 8px;
+/* 左側の垂直ラベル（写真の「バイト」「授業」部分） */
+.event-category-bar {
+  width: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid rgba(0,0,0,0.08);
+}
+
+.category-text {
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-size: 10px;
   font-weight: bold;
-  opacity: 0.7;
-  margin-bottom: 2px;
+  letter-spacing: 1px;
+  color: rgba(0,0,0,0.7);
+}
+
+/* 右側の詳細テキスト */
+.event-details {
+  flex: 1;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0; /* テキスト溢れ防止 */
 }
 
 .event-main {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
-  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 2px;
   word-break: break-all;
 }
 
-.event-sub {
+.event-sub-info {
+  font-size: 9px;
+  color: #666;
+  line-height: 1.3;
+}
+
+.event-time-range {
   font-size: 8px;
-  text-align: center;
-  opacity: 0.8;
-  margin-top: 2px;
+  color: #888;
+  margin-top: 1px;
 }
 
 .fab {
@@ -123,14 +167,7 @@
   color: white;
   border: none;
   font-size: 30px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0,122,255,0.4);
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 100;
-}
-
-.fab:active {
-  transform: scale(0.95);
 }

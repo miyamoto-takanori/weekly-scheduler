@@ -3,12 +3,13 @@ import './App.css';
 import { db } from './db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
-// カテゴリごとの配色設定（PDFのイメージに合わせて）
+// カテゴリ設定（色と集計対象の有無）
 const CATEGORY_SETTINGS = {
-  'バイト': { color: '#FFE599' },
-  '勉強': { color: '#D0E2F3' },
-  '筋トレ': { color: '#EAD1DC' },
-  'その他': { color: '#E2E2E2' }
+  'バイト': { color: '#D1B9FF', hasTotal: true }, // 写真に近い薄紫
+  '授業': { color: '#33CFFF', hasTotal: true },   // 写真に近い水色
+  '筋トレ': { color: '#FFADAD', hasTotal: false },
+  'キラ勉': { color: '#B9FBC0', hasTotal: true },
+  'その他': { color: '#E2E2E2', hasTotal: false }
 };
 
 function App() {
@@ -29,15 +30,29 @@ function App() {
   // 2. データベースから予定を取得
   const events = useLiveQuery(() => db.events.toArray()) || [];
 
-  // 時間軸（6:00〜24:00まで1時間ごと）
-  const timeLabels = Array.from({ length: 19 }, (_, i) => i + 6);
-
-  // 時刻文字列（"08:00"）を分（6:00起点）に変換する関数
+  // 時刻文字列（"08:00"）を分（6:00起点）に変換
   const getMinutesFromStart = (timeStr) => {
     if (!timeStr) return 0;
     const [h, m] = timeStr.split(':').map(Number);
     return (h - 6) * 60 + m;
   };
+
+  // 特定の日の合計時間を計算する関数
+  const calculateDailyTotal = (dayEvents) => {
+    const totalMinutes = dayEvents
+      .filter(e => CATEGORY_SETTINGS[e.category]?.hasTotal)
+      .reduce((acc, e) => {
+        const duration = getMinutesFromStart(e.endTime) - getMinutesFromStart(e.startTime);
+        return acc + (duration > 0 ? duration : 0);
+      }, 0);
+    
+    const h = Math.floor(totalMinutes / 60);
+    const m = totalMinutes % 60;
+    if (h === 0 && m === 0) return "0min";
+    return m === 0 ? `${h}h` : `${h}h ${m}min`;
+  };
+
+  const timeLabels = Array.from({ length: 19 }, (_, i) => i + 6);
 
   return (
     <div className="app-container">
@@ -46,7 +61,6 @@ function App() {
       </header>
       
       <div className="schedule-board">
-        {/* 左側の時間軸列 */}
         <div className="time-column">
           <div className="header-cell">時間</div>
           {timeLabels.map(hour => (
@@ -54,23 +68,25 @@ function App() {
           ))}
         </div>
 
-        {/* 月〜日の各列 */}
         {weekDates.map((date, i) => {
-          // YYYY-MM-DD形式に変換
           const dateString = date.toISOString().split('T')[0];
           const dayEvents = events.filter(e => e.date === dateString);
 
           return (
             <div key={i} className="day-column">
               <div className="header-cell">
-                {date.getMonth() + 1}/{date.getDate()}
-                ({['日', '月', '火', '水', '木', '金', '土'][date.getDay()]})
+                <div className="date-info">
+                  <span className="date-text">
+                    {date.getMonth() + 1}/{date.getDate()} ({['日', '月', '火', '水', '木', '金', '土'][date.getDay()]})
+                  </span>
+                  <span className="total-time">{calculateDailyTotal(dayEvents)}</span>
+                </div>
               </div>
               <div className="grid-body">
                 {dayEvents.map(event => {
                   const top = getMinutesFromStart(event.startTime);
                   const duration = getMinutesFromStart(event.endTime) - top;
-                  const bgColor = CATEGORY_SETTINGS[event.category]?.color || '#fff';
+                  const themeColor = CATEGORY_SETTINGS[event.category]?.color || '#E2E2E2';
 
                   return (
                     <div 
@@ -79,12 +95,22 @@ function App() {
                       style={{
                         top: `${top}px`,
                         height: `${duration}px`,
-                        backgroundColor: bgColor
                       }}
                     >
-                      <span className="event-category">{event.category}</span>
-                      <span className="event-main">{event.mainTitle}</span>
-                      <span className="event-sub">{event.subTitle}</span>
+                      {/* 左側のカテゴリ垂直ラベル */}
+                      <div className="event-category-bar" style={{ backgroundColor: themeColor }}>
+                        <span className="category-text">{event.category}</span>
+                      </div>
+                      {/* 右側の詳細情報 */}
+                      <div className="event-details">
+                        <span className="event-main" style={{ color: themeColor === '#33CFFF' ? '#007bb0' : 'inherit' }}>
+                          {event.mainTitle}
+                        </span>
+                        <span className="event-sub-info">
+                          {event.subTitle}
+                          <div className="event-time-range">{event.startTime}-{event.endTime}</div>
+                        </span>
+                      </div>
                     </div>
                   );
                 })}
@@ -94,17 +120,17 @@ function App() {
         })}
       </div>
       
-      {/* 簡易入力テスト用ボタン */}
       <button className="fab" onClick={() => {
-        const testTitle = prompt("メインタイトルを入力してください", "ソフトウェア工学");
-        if(testTitle) {
+        const cat = prompt("カテゴリ (授業, バイト, 筋トレ, キラ勉, その他)", "授業");
+        const main = prompt("メインタイトル", "計算機科学実験及演習4");
+        if(main) {
           db.events.add({
-            date: new Date().toISOString().split('T')[0], // 今日
-            category: '勉強',
-            mainTitle: testTitle,
-            subTitle: '第01講',
-            startTime: '09:00',
-            endTime: '10:30'
+            date: new Date().toISOString().split('T')[0],
+            category: cat || 'その他',
+            mainTitle: main,
+            subTitle: '第07講',
+            startTime: '13:00',
+            endTime: '16:00'
           });
         }
       }}>+</button>
