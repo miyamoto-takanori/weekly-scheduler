@@ -1,10 +1,10 @@
-/* --- ベース設定 --- */
+/* --- 1. ベース設定 & リセット --- */
 :root {
   --theme-blue: #3b82f6;
   --bg-gray: #f9fafb;
+  --danger-red: #ef4444;
 }
 
-/* 全体制御 (過去コードの知見) */
 * {
   box-sizing: border-box;
   -webkit-touch-callout: none !important;
@@ -28,7 +28,7 @@ input, select, textarea {
   position: fixed;
 }
 
-/* --- ヘッダー (①の空白問題解消とデザイン強化) --- */
+/* --- 2. ヘッダー --- */
 .page-header {
   flex-shrink: 0;
   background-color: rgba(255, 255, 255, 0.7);
@@ -75,22 +75,21 @@ input, select, textarea {
   color: #9ca3af;
 }
 
-/* --- メインコンテンツエリア (①の空白解消) --- */
+/* --- 3. スケジュールボード --- */
 .swipe-container {
-  flex: 1; /* 残りのスペースをすべて使う */
+  flex: 1;
   position: relative;
   width: 100%;
 }
 
 .single-day-board {
   position: absolute;
-  inset: 0; /* 四方を0に固定して全画面化 */
+  inset: 0;
   display: flex;
   overflow-y: auto;
   padding-bottom: 100px;
 }
 
-/* --- 時間軸の調整 (③の数字のズレ解消) --- */
 .time-column {
   width: 45px;
   flex-shrink: 0;
@@ -100,10 +99,9 @@ input, select, textarea {
 
 .time-cell {
   height: 60px;
-  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center; /* 中央揃え */
+  align-items: center;
 }
 
 .time-number {
@@ -111,10 +109,9 @@ input, select, textarea {
   font-weight: 700;
   color: #9ca3af;
   position: relative;
-  top: -30px; /* セルの「境界線上」に数字を配置するための調整 */
+  top: -30px;
 }
 
-/* --- グリッド線 --- */
 .grid-body {
   flex: 1;
   position: relative;
@@ -123,11 +120,17 @@ input, select, textarea {
   min-height: 1140px;
 }
 
-/* --- 予定カード (②の文字中央揃え) --- */
+/* --- 4. 予定カード (ScheduleItem) --- */
 .event-card-mobile {
   position: absolute;
   left: 10px; right: 15px;
   padding: 1px 0;
+  transition: transform 0.1s;
+}
+
+.event-card-mobile:active {
+  transform: scale(0.97);
+  opacity: 0.9;
 }
 
 .event-card-inner {
@@ -135,16 +138,17 @@ input, select, textarea {
   display: flex;
   background: #fff;
   border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0,0,0,0.08); /* ①角丸の汚れ防止に境界を明確化 */
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   overflow: hidden;
+  position: relative;
 }
 
 .event-category-sidebar {
-  width: 32px;
+  width: 30px;
   display: flex;
   align-items: center;
-  justify-content: center; /* ②中央揃え */
+  justify-content: center; /* ②上下左右中央 */
 }
 
 .vertical-cat-text {
@@ -153,27 +157,59 @@ input, select, textarea {
   font-size: 11px;
   font-weight: 800;
   color: rgba(0,0,0,0.5);
-  display: block;
-  text-align: center; /* ②中央揃え */
+  text-align: center;
 }
 
 .event-info {
   flex: 1;
-  padding: 10px 15px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-width: 0; /* 文字溢れ防止 */
 }
 
-.event-main-title { font-size: 15px; font-weight: 800; color: #1f2937; }
-.event-sub-title { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.event-main-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-sub-title {
+  font-size: 11px;
+  color: #6b7280;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .event-time-badge {
-  font-size: 10px; font-weight: 700; color: var(--theme-blue);
-  background: #eff6ff; padding: 2px 8px; border-radius: 6px;
-  align-self: flex-start; margin-top: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--theme-blue);
+  background: #eff6ff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
-/* --- モーダル (過去コードを完全移植) --- */
+/* ② 1時間未満の短い予定用 */
+.is-short .event-info {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 12px;
+}
+.is-short .event-time-badge { margin-top: 0; }
+.is-short .event-sub-title { display: none; }
+
+/* --- 5. モーダル共通 (Add/Edit Modal) --- */
 .modal-overlay {
   position: fixed; inset: 0;
   background: rgba(0, 0, 0, 0.3);
@@ -189,22 +225,64 @@ input, select, textarea {
   background: white; width: 100%;
   border-radius: 28px; padding: 24px;
   box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+  animation: slideUp 0.3s ease-out;
 }
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-header {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-header h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+
+.edit-form { display: flex; flex-direction: column; gap: 16px; }
+.form-section { display: flex; flex-direction: column; gap: 4px; }
+.form-label { font-size: 0.75rem; font-weight: 800; color: var(--theme-blue); text-transform: uppercase; }
 
 .input-field {
-  width: 100%; padding: 0.8rem; font-size: 1rem;
+  width: 100%; padding: 0.8rem; font-size: 16px; /* iPhoneズーム防止 */
   border-radius: 12px; border: 2px solid #f3f4f6;
-  background: #f9fafb; outline: none; margin-top: 4px;
+  background: #f9fafb; outline: none;
 }
 
-.input-field:focus { border-color: var(--theme-blue); background: #fff; }
-
-.form-label { font-size: 0.75rem; font-weight: 800; color: var(--theme-blue); text-transform: uppercase; }
+/* ④ iPhone タイムスライダー対策 */
+.time-row-iphone {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+.time-input-container {
+  flex: 1;
+  min-width: 0; /* これが重要 */
+}
 
 .modal-actions { display: flex; gap: 12px; margin-top: 24px; }
 .save-btn { flex: 2; background: var(--theme-blue); color: #fff; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
 .cancel-btn { flex: 1; background: #f3f4f6; color: #666; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
 
+/* ⑥ 編集/削除用追加スタイル */
+.delete-exec-btn {
+  flex: 2;
+  background: var(--danger-red);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 800;
+}
+
+.delete-confirm-view {
+  text-align: center;
+  padding: 10px 0;
+  color: #4b5563;
+}
+
+/* --- 6. その他 UI --- */
 .fab-button {
   position: fixed; bottom: 30px; right: 25px;
   width: 64px; height: 64px; border-radius: 22px;
@@ -212,4 +290,5 @@ input, select, textarea {
   font-size: 32px; border: none;
   box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
   z-index: 100;
+  display: flex; align-items: center; justify-content: center;
 }
