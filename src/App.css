@@ -1,170 +1,215 @@
-/* 全体レイアウト */
-.app-container {
-  height: 100vh;
+/* --- ベース設定 --- */
+:root {
+  --theme-blue: #3b82f6;
+  --bg-gray: #f9fafb;
+}
+
+/* 全体制御 (過去コードの知見) */
+* {
+  box-sizing: border-box;
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, select, textarea {
+  -webkit-user-select: auto;
+  user-select: auto;
+}
+
+.app-layout {
+  height: 100dvh;
   width: 100vw;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background-color: var(--bg-gray);
   overflow: hidden;
   position: fixed;
 }
 
-.mobile-header {
-  z-index: 100;
-  background: #fff;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
+/* --- ヘッダー (①の空白問題解消とデザイン強化) --- */
+.page-header {
+  flex-shrink: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-.header-top {
+.header-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--theme-blue);
+  font-weight: 800;
+  margin-bottom: 2px;
+}
+
+.header-top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
 }
 
-.header-center { text-align: center; }
-.date-display { font-weight: bold; font-size: 1.1rem; }
-.total-display { font-size: 0.8rem; color: #007aff; }
+.header-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(to right, #111827, #4b5563);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.day-label { font-size: 1rem; opacity: 0.8; }
+.header-total { font-size: 0.75rem; color: var(--theme-blue); font-weight: 700; }
 
 .nav-btn {
-  background: none;
+  background: #f3f4f6;
   border: none;
-  font-size: 20px;
-  color: #ccc;
-  padding: 10px;
+  width: 36px; height: 36px;
+  border-radius: 12px;
+  color: #9ca3af;
 }
 
+/* --- メインコンテンツエリア (①の空白解消) --- */
 .swipe-container {
-  flex: 1;
+  flex: 1; /* 残りのスペースをすべて使う */
   position: relative;
-  overflow: hidden;
+  width: 100%;
 }
 
 .single-day-board {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  inset: 0; /* 四方を0に固定して全画面化 */
   display: flex;
   overflow-y: auto;
+  padding-bottom: 100px;
 }
 
-.time-column-mini {
-  width: 40px;
+/* --- 時間軸の調整 (③の数字のズレ解消) --- */
+.time-column {
+  width: 45px;
   flex-shrink: 0;
-  border-right: 1px solid #f0f0f0;
+  background: rgba(255,255,255,0.5);
+  border-right: 0.5px solid #eee;
 }
 
-.time-label-mini {
+.time-cell {
   height: 60px;
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 2px;
+  align-items: center; /* 中央揃え */
 }
 
-.time-label-mini span {
+.time-number {
   font-size: 11px;
-  color: #bbb;
-  font-weight: 500;
+  font-weight: 700;
+  color: #9ca3af;
+  position: relative;
+  top: -30px; /* セルの「境界線上」に数字を配置するための調整 */
 }
 
-.grid-body-main { 
-  flex: 1; 
+/* --- グリッド線 --- */
+.grid-body {
+  flex: 1;
   position: relative;
-  background-image: linear-gradient(#f0f0f0 1px, transparent 1px);
+  background-image: linear-gradient(#eee 0.5px, transparent 0.5px);
   background-size: 100% 60px;
   min-height: 1140px;
 }
 
-/* 予定カード */
-.event-item-mobile {
+/* --- 予定カード (②の文字中央揃え) --- */
+.event-card-mobile {
   position: absolute;
-  left: 8px;
-  right: 15px;
+  left: 10px; right: 15px;
+  padding: 1px 0;
+}
+
+.event-card-inner {
+  height: 100%;
   display: flex;
   background: #fff;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   overflow: hidden;
 }
 
-.event-cat-vertical {
-  width: 30px;
+.event-category-sidebar {
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* ②中央揃え */
+}
+
+.vertical-cat-text {
   writing-mode: vertical-rl;
   text-orientation: upright;
   font-size: 11px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(0,0,0,0.6);
+  font-weight: 800;
+  color: rgba(0,0,0,0.5);
+  display: block;
+  text-align: center; /* ②中央揃え */
 }
 
-.event-content {
+.event-info {
   flex: 1;
-  padding: 8px 12px;
+  padding: 10px 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.event-main-text { font-size: 14px; font-weight: bold; color: #333; }
-.event-sub-text { font-size: 11px; color: #666; margin-top: 2px; }
-.event-time-text { font-size: 10px; color: #999; margin-top: 2px; }
-
-/* FAB（追加ボタン） */
-.fab {
-  position: fixed;
-  bottom: 30px;
-  right: 25px;
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: #007aff;
-  color: white;
-  border: none;
-  font-size: 30px;
-  box-shadow: 0 4px 15px rgba(0,122,255,0.4);
-  z-index: 100;
+.event-main-title { font-size: 15px; font-weight: 800; color: #1f2937; }
+.event-sub-title { font-size: 12px; color: #6b7280; margin-top: 2px; }
+.event-time-badge {
+  font-size: 10px; font-weight: 700; color: var(--theme-blue);
+  background: #eff6ff; padding: 2px 8px; border-radius: 6px;
+  align-self: flex-start; margin-top: 6px;
 }
 
-/* モーダル（スマホ用） */
+/* --- モーダル (過去コードを完全移植) --- */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: flex-end; /* 下から出す */
-  z-index: 1000;
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex; align-items: flex-end;
+  z-index: 2000;
+  padding: 16px;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
 .modal-content {
-  background: #fff;
-  width: 100%;
-  padding: 20px;
-  border-radius: 20px 20px 0 0;
-  box-sizing: border-box;
+  background: white; width: 100%;
+  border-radius: 28px; padding: 24px;
+  box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
 }
 
-.modal-content label {
-  font-size: 12px;
-  color: #666;
-  font-weight: bold;
+.input-field {
+  width: 100%; padding: 0.8rem; font-size: 1rem;
+  border-radius: 12px; border: 2px solid #f3f4f6;
+  background: #f9fafb; outline: none; margin-top: 4px;
 }
 
-.modal-content input, .modal-content select {
-  width: 100%;
-  padding: 12px;
-  margin: 5px 0 15px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px; /* iPhoneズーム防止 */
-  box-sizing: border-box;
+.input-field:focus { border-color: var(--theme-blue); background: #fff; }
+
+.form-label { font-size: 0.75rem; font-weight: 800; color: var(--theme-blue); text-transform: uppercase; }
+
+.modal-actions { display: flex; gap: 12px; margin-top: 24px; }
+.save-btn { flex: 2; background: var(--theme-blue); color: #fff; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
+.cancel-btn { flex: 1; background: #f3f4f6; color: #666; border: none; padding: 14px; border-radius: 16px; font-weight: 800; }
+
+.fab-button {
+  position: fixed; bottom: 30px; right: 25px;
+  width: 64px; height: 64px; border-radius: 22px;
+  background: var(--theme-blue); color: white;
+  font-size: 32px; border: none;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+  z-index: 100;
 }
-
-.row { display: flex; align-items: center; gap: 10px; }
-
-.modal-btns { display: flex; gap: 10px; margin-top: 10px; }
-.cancel-btn { flex: 1; padding: 12px; border: none; background: #eee; border-radius: 8px; }
-.save-btn { flex: 2; background: #007aff; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; }
