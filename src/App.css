@@ -156,6 +156,7 @@ input, select, textarea {
   flex-shrink: 0;
   background: rgba(255,255,255,0.5);
   border-right: 0.5px solid #eee;
+  padding-top: 20px; /* ② 上部に余裕を持たせる */
 }
 
 .time-cell {
@@ -169,15 +170,40 @@ input, select, textarea {
   font-size: 11px;
   font-weight: 700;
   color: #9ca3af;
-  position: relative;
-  top: calc(var(--row-height) / -2);
+  display: block;
+  text-align: center;
 }
 
 .grid-body {
   flex: 1;
   position: relative;
   background-image: linear-gradient(#eee 0.5px, transparent 0.5px);
-  /* background-size は App.jsx の inline style で設定されます */
+  margin-top: 20px; /* ② 時間軸ラベルのパディングと合わせる */
+}
+
+/* ① 日付選択のスタイル */
+.hidden-date-input {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+}
+
+.header-title-clickable {
+  cursor: pointer;
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.header-title-clickable:active {
+  background: rgba(0,0,0,0.05);
+}
+
+.calendar-icon-mini {
+  font-size: 0.8rem;
+  margin-left: 6px;
+  vertical-align: middle;
 }
 
 /* --- 4. 予定カード (ScheduleItem) --- */

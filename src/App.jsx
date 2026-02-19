@@ -72,10 +72,22 @@ function App() {
         <div className="header-top-row">
           <button className="nav-btn" onClick={() => changeDate(-1)}>◀</button>
           <div className="header-center">
-            <h1 className="header-title">
-              {selectedDate.getMonth() + 1}/{selectedDate.getDate()} 
-              <span className="day-label"> ({WEEKDAYS[selectedDate.getDay()]})</span>
-            </h1>
+            <div className="date-selector-wrapper">
+              <input 
+                type="date" 
+                className="hidden-date-input" 
+                id="main-date-picker"
+                value={dateString}
+                onChange={(e) => setSelectedDate(new Date(e.target.value))}
+              />
+              <label htmlFor="main-date-picker" className="header-title-clickable">
+                <h1 className="header-title">
+                  {selectedDate.getMonth() + 1}/{selectedDate.getDate()} 
+                  <span className="day-label"> ({WEEKDAYS[selectedDate.getDay()]})</span>
+                  <span className="calendar-icon-mini">📅</span>
+                </h1>
+              </label>
+            </div>
             <div className="header-totals-container">
               {Object.entries(categoryTotals).map(([cat, mins]) => (
                 <div key={cat} className="header-total-pill">
