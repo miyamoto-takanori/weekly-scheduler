@@ -10,4 +10,4 @@ export const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
 
 // 他にも、開始時間（6時）などのマジックナンバーを共通化しておくとメンテナンスが楽になります
 export const START_HOUR = 6;
-export const ROW_HEIGHT = 60; // 1時間あたりの高さ(px)
+export const ROW_HEIGHT = 100; // 1時間あたりの高さ(px)
