@@ -1,9 +1,12 @@
 export const CATEGORY_SETTINGS = {
-  'バイト': { color: '#D1B9FF', hasTotal: true },
-  '授業': { color: '#33CFFF', hasTotal: true },
-  '筋トレ': { color: '#FFADAD', hasTotal: false },
-  'キラ勉': { color: '#B9FBC0', hasTotal: true },
-  'その他': { color: '#E2E2E2', hasTotal: false }
+  '授業': { color: '#29cdff', hasTotal: false },
+  '考査': { color: '#ff4f4f', hasTotal: false },
+  'バイト': { color: '#9861ff', hasTotal: false },
+  'サークル': { color: '#ff9654', hasTotal: false },
+  'イベント': { color: '#4fff4c', hasTotal: false },
+  '筋トレ': { color: '#6d80f7', hasTotal: true },
+  '予定': { color: '#fdb4b4', hasTotal: false },
+  '勉強': { color: '#b2b2b2'}
 };
 
 export const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
